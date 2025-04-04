@@ -1,13 +1,46 @@
 <div class="container mt-4">
     <h2>Categorías</h2>
 
-    <button class="btn btn-success" (click)="agregarNuevaCategoria()">Agregar Nueva</button>
+    <button class="btn btn-success" (click)="abrirModalNuevoCategoria()">Agregar Nueva</button>
     <hr>
+
+    <div *ngIf="mostrarModalNuevo" class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Nueva Categoría</h5>
+                    <button type="button" class="btn-close" (click)="cerrarModalNuevoCategoria()"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre de la Categoría</label>
+                            <input type="text" class="form-control" id="nombre" [(ngModel)]="nuevoNombre"
+                                name="nuevoNombre" placeholder="Ingrese el nombre">
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción (Opcional)</label>
+                            <textarea class="form-control" id="descripcion" [(ngModel)]="nuevaDescripcion"
+                                name="nuevaDescripcion" rows="3" placeholder="Ingrese la descripción"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        (click)="cerrarModalNuevoCategoria()">Cancelar</button>
+                    <button type="button" class="btn btn-primary" (click)="guardarNuevaCategoria()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <table class="table">
         <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Nombre</th>
+                <th scope="col">Descripción</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
@@ -15,6 +48,7 @@
             <tr *ngFor="let categoria of categorias">
                 <th scope="row">{{ categoria.id }}</th>
                 <td>{{ categoria.nombre }}</td>
+                <td>{{ categoria.descripcion || '-' }}</td>
                 <td>
                     <button class="btn btn-sm btn-primary me-2" (click)="editarCategoria(categoria.id)">Editar</button>
                     <button class="btn btn-sm btn-danger" (click)="eliminarCategoria(categoria.id)">Eliminar</button>
@@ -22,4 +56,6 @@
             </tr>
         </tbody>
     </table>
+
+    <div *ngIf="mostrarModalNuevo" class="modal-backdrop fade show"></div>
 </div>

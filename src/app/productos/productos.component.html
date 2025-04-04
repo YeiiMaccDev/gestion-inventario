@@ -1,1 +1,110 @@
-<p>productos works!</p>
+<div class="container mt-4">
+    <h2>Productos</h2>
+
+    <button class="btn btn-success" (click)="abrirModalNuevoProducto()">Agregar Nuevo</button>
+    <hr>
+
+    <div *ngIf="mostrarModalNuevo" class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Nuevo Producto</h5>
+                    <button type="button" class="btn-close" (click)="cerrarModalNuevoProducto()"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" [(ngModel)]="nuevoProducto.nombre"
+                                name="nombre" placeholder="Ingrese el nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" [(ngModel)]="nuevoProducto.descripcion"
+                                name="descripcion" rows="3" placeholder="Ingrese la descripción" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="codBarras" class="form-label">Código de Barras</label>
+                            <input type="text" class="form-control" id="codBarras" [(ngModel)]="nuevoProducto.codBarras"
+                                name="codBarras" placeholder="Ingrese el código de barras" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="precioCompra" class="form-label">Precio de Compra</label>
+                                <input type="number" class="form-control" id="precioCompra"
+                                    [(ngModel)]="nuevoProducto.precioCompra" name="precioCompra"
+                                    placeholder="Ingrese el precio de compra" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="precioVenta" class="form-label">Precio de Venta</label>
+                                <input type="number" class="form-control" id="precioVenta"
+                                    [(ngModel)]="nuevoProducto.precioVenta" name="precioVenta"
+                                    placeholder="Ingrese el precio de venta" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="idTipoProducto" class="form-label">Tipo de Producto</label>
+                                <select class="form-select" id="idTipoProducto"
+                                    [(ngModel)]="nuevoProducto.idTipoProducto" name="idTipoProducto" required>
+                                    <option value="0" disabled>Seleccione un tipo</option>
+                                    <option *ngFor="let tipo of tiposProductos" [value]="tipo.id">{{ tipo.nombre }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="idCategoriaProducto" class="form-label">Categoría</label>
+                                <select class="form-select" id="idCategoriaProducto"
+                                    [(ngModel)]="nuevoProducto.idCategoriaProducto" name="idCategoriaProducto" required>
+                                    <option value="0" disabled>Seleccione una categoría</option>
+                                    <option *ngFor="let categoria of categoriasProductos" [value]="categoria.id">{{
+                                        categoria.nombre }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        (click)="cerrarModalNuevoProducto()">Cancelar</button>
+                    <button type="button" class="btn btn-primary" (click)="guardarNuevoProducto()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Código de Barras</th>
+                <th scope="col">Precio Compra</th>
+                <th scope="col">Precio Venta</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let producto of productos">
+              <th scope="row">{{ producto.idProducto }}</th>
+              <td>{{ producto.nombre }}</td>
+              <td>{{ producto.descripcion }}</td>
+              <td>{{ producto.codBarras }}</td>
+              <td>{{ producto.precioCompra }}</td>
+              <td>{{ producto.precioVenta }}</td>
+              <td>{{ getNombreTipoProducto(producto.idTipoProducto) }}</td>
+              <td>{{ getNombreCategoriaProducto(producto.idCategoriaProducto) }}</td>
+              <td>
+                <button class="btn btn-sm btn-primary me-2" (click)="editarProducto(producto.idProducto)">Editar</button>
+                <button class="btn btn-sm btn-danger" (click)="eliminarProducto(producto.idProducto)">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+    </table>
+
+    <div *ngIf="mostrarModalNuevo" class="modal-backdrop fade show"></div>
+</div>
