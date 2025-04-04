@@ -1,0 +1,25 @@
+<div class="container mt-4">
+    <h2>Tipos de Productos</h2>
+
+    <button class="btn btn-success">Agregar Nuevo </button>
+    <hr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let tipo of tiposProductos">
+                <th scope="row">{{ tipo.id }}</th>
+                <td>{{ tipo.nombre }}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary me-2" (click)="editarTipoProducto(tipo.id)">Editar</button>
+                    <button class="btn btn-sm btn-danger" (click)="eliminarTipoProducto(tipo.id)">Eliminar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
