@@ -30,6 +30,33 @@
         </div>
     </div>
 
+    <div *ngIf="mostrarModalEditar" class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Tipo de Producto</h5>
+                    <button type="button" class="btn-close" (click)="cerrarModalEditarTipoProducto()"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="editarNombre" class="form-label">Nombre del Tipo de Producto</label>
+                            <input type="text" class="form-control" id="editarNombre" [(ngModel)]="editarNombre"
+                                name="editarNombre" placeholder="Ingrese el nuevo nombre">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        (click)="cerrarModalEditarTipoProducto()">Cancelar</button>
+                    <button type="button" class="btn btn-primary" (click)="guardarEditarTipoProducto()">Guardar
+                        Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <table class="table">
         <thead>
             <tr>
@@ -43,12 +70,13 @@
                 <th scope="row">{{ tipo.id }}</th>
                 <td>{{ tipo.nombre }}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary me-2" (click)="editarTipoProducto(tipo.id)">Editar</button>
+                    <button class="btn btn-sm btn-primary me-2"
+                        (click)="abrirModalEditarTipoProducto(tipo)">Editar</button>
                     <button class="btn btn-sm btn-danger" (click)="eliminarTipoProducto(tipo.id)">Eliminar</button>
                 </td>
             </tr>
         </tbody>
     </table>
 
-    <div *ngIf="mostrarModalNuevo" class="modal-backdrop fade show"></div>
+    <div *ngIf="mostrarModalNuevo || mostrarModalEditar" class="modal-backdrop fade show"></div>
 </div>

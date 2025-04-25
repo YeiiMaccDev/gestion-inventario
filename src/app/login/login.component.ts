@@ -20,7 +20,7 @@ export class LoginComponent {
     // Aquí iría la lógica de autenticación real (llamada a tu backend)
 
     // Simulación de inicio de sesión exitoso
-    if (this.username === 'usuario' && this.password === 'contrasena') {
+    if (this.username === 'admin_inventario@gmail.com' && this.password === 'inventarioLZYM') {
       console.log('Inicio de sesión exitoso');
       this.router.navigate(['/dashboard']); // Redirige al layout del dashboard
     } else {
