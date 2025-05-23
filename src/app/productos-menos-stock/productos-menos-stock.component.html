@@ -1,0 +1,40 @@
+<div class="container mt-4">
+    <h2>Reporte de Productos con Menor Stock</h2>
+
+    <div class="mb-3">
+        <label for="limiteMostrar" class="form-label">Mostrar los primeros:</label>
+        <div class="input-group" style="max-width: 250px;">
+            <input type="number" class="form-control" id="limiteMostrar" [(ngModel)]="limiteMostrar"
+                name="limiteMostrar" min="1" max="100" placeholder="Ej: 5">
+            <span class="input-group-text">productos</span>
+            <button class="btn btn-primary" (click)="cargarProductosMenosStock()">Actualizar Reporte</button>
+        </div>
+        <small class="form-text text-muted">Ingresa un número entre 1 y 100 para el límite.</small>
+    </div>
+    <hr>
+
+    <div *ngIf="successMessage" class="alert alert-info mt-3">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">ID Producto</th>
+                    <th scope="col">Nombre del Producto</th>
+                    <th scope="col">Stock Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngIf="productosMenosStock.length === 0">
+                    <td colspan="3" class="text-center">No se encontraron productos con stock en este reporte.</td>
+                </tr>
+                <tr *ngFor="let producto of productosMenosStock">
+                    <td>{{ producto.id_producto }}</td>
+                    <td>{{ producto.producto_nombre }}</td>
+                    <td>{{ producto.total_stock }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

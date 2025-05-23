@@ -1,1 +1,112 @@
-<p>lotes works!</p>
+<div class="container mt-4">
+    <h2>Lotes</h2>
+  
+    <button class="btn btn-success" (click)="abrirModalNuevoLote()">Agregar Nuevo Lote</button>
+    <hr>
+  
+    <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+  
+    <div *ngIf="mostrarModalNuevo" class="modal fade show" style="display: block;" tabindex="-1" role="dialog"
+      aria-labelledby="nuevoLoteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="nuevoLoteModalLabel">Agregar Nuevo Lote</h5>
+            <button type="button" class="btn-close" (click)="cerrarModalNuevoLote()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="nuevoCodigoLote" class="form-label">Código de Lote</label>
+                <input type="text" class="form-control" id="nuevoCodigoLote" [(ngModel)]="nuevoCodigoLote"
+                  name="nuevoCodigoLote" placeholder="Ingrese el código del lote" required>
+              </div>
+              <div class="mb-3">
+                <label for="nuevaFechaIngreso" class="form-label">Fecha de Ingreso</label>
+                <input type="date" class="form-control" id="nuevaFechaIngreso" [(ngModel)]="nuevaFechaIngreso"
+                  name="nuevaFechaIngreso" required>
+              </div>
+              <div class="mb-3">
+                <label for="nuevaFechaVencimiento" class="form-label">Fecha de Vencimiento (Opcional)</label>
+                <input type="date" class="form-control" id="nuevaFechaVencimiento" [(ngModel)]="nuevaFechaVencimiento"
+                  name="nuevaFechaVencimiento">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModalNuevoLote()">Cancelar</button>
+            <button type="button" class="btn btn-primary" (click)="guardarNuevoLote()"
+              [disabled]="!nuevoCodigoLote.trim() || !nuevaFechaIngreso.trim()">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Código de Lote</th>
+            <th scope="col">Fecha de Ingreso</th>
+            <th scope="col">Fecha de Vencimiento</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="lotes.length === 0">
+            <td colspan="5" class="text-center">No hay lotes para mostrar.</td>
+          </tr>
+          <tr *ngFor="let lote of lotes">
+            <th scope="row">{{ lote.id_lote }}</th>
+            <td>{{ lote.codigo_lote }}</td>
+            <td>{{ lote.fecha_ingreso }}</td>
+            <td>{{ lote.fecha_vencimiento || 'N/A' }}</td>
+            <td>
+              <button class="btn btn-sm btn-primary me-2" (click)="abrirModalEditarLote(lote)">Editar</button>
+              <button class="btn btn-sm btn-danger" (click)="eliminarLote(lote.id_lote)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div *ngIf="mostrarModalEditar" class="modal fade show" style="display: block;" tabindex="-1" role="dialog"
+      aria-labelledby="editarLoteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editarLoteModalLabel">Editar Lote</h5>
+            <button type="button" class="btn-close" (click)="cerrarModalEditarLote()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="editarCodigoLote" class="form-label">Código de Lote</label>
+                <input type="text" class="form-control" id="editarCodigoLote" [(ngModel)]="editarCodigoLote"
+                  name="editarCodigoLote" required>
+              </div>
+              <div class="mb-3">
+                <label for="editarFechaIngreso" class="form-label">Fecha de Ingreso</label>
+                <input type="date" class="form-control" id="editarFechaIngreso" [(ngModel)]="editarFechaIngreso"
+                  name="editarFechaIngreso" required>
+              </div>
+              <div class="mb-3">
+                <label for="editarFechaVencimiento" class="form-label">Fecha de Vencimiento (Opcional)</label>
+                <input type="date" class="form-control" id="editarFechaVencimiento" [(ngModel)]="editarFechaVencimiento"
+                  name="editarFechaVencimiento">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModalEditarLote()">Cancelar</button>
+            <button type="button" class="btn btn-primary" (click)="guardarEdicionLote()"
+              [disabled]="!editarCodigoLote.trim() || !editarFechaIngreso.trim()">Guardar Cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="mostrarModalNuevo || mostrarModalEditar" class="modal-backdrop fade show"></div>
+  </div>

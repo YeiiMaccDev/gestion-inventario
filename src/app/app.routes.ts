@@ -8,6 +8,8 @@ import { ProductosComponent } from './productos/productos.component';
 import { LotesComponent } from './lotes/lotes.component';
 import { InventarioComponent } from './inventario/inventario.component';
 import { RegisterComponent } from './register/register.component';
+import { ProductosAvencerComponent } from './productos-avencer/productos-avencer.component';
+import { ProductosMenosStockComponent } from './productos-menos-stock/productos-menos-stock.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -24,6 +26,8 @@ export const routes: Routes = [
       { path: 'productos', component: ProductosComponent },
       { path: 'lotes', component: LotesComponent },
       { path: 'inventario', component: InventarioComponent },
+      { path: 'productos-a-vencer', component: ProductosAvencerComponent },
+      { path: 'productos-menos-stock', component: ProductosMenosStockComponent },
       // ... otras rutas del dashboard
     ]
   }

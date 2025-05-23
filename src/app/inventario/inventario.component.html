@@ -1,1 +1,132 @@
-<p>inventario works!</p>
+<div class="container mt-4">
+    <h2>Inventario</h2>
+
+    <button class="btn btn-success" (click)="abrirModalNuevoRegistro()">Agregar Nuevo Registro</button>
+    <hr>
+
+    <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+
+    <div *ngIf="mostrarModalNuevo" class="modal fade show" style="display: block;" tabindex="-1" role="dialog"
+        aria-labelledby="nuevoRegistroModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nuevoRegistroModalLabel">Agregar Nuevo Registro de Inventario</h5>
+                    <button type="button" class="btn-close" (click)="cerrarModalNuevoRegistro()"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="nuevoIdProducto" class="form-label">Producto</label>
+                            <select class="form-control" id="nuevoIdProducto" [(ngModel)]="nuevoIdProducto"
+                                name="nuevoIdProducto" required>
+                                <option [ngValue]="null" disabled>Seleccione un producto</option>
+                                <option *ngFor="let producto of productosDisponibles" [ngValue]="producto.idProducto">{{
+                                    producto.nombre }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nuevoIdLote" class="form-label">Lote</label>
+                            <select class="form-control" id="nuevoIdLote" [(ngModel)]="nuevoIdLote" name="nuevoIdLote"
+                                required>
+                                <option [ngValue]="null" disabled>Seleccione un lote</option>
+                                <option *ngFor="let lote of lotesDisponibles" [ngValue]="lote.id_lote || 0">{{ lote.codigo_lote }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nuevoStock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="nuevoStock" [(ngModel)]="nuevoStock"
+                                name="nuevoStock" placeholder="Ingrese el stock" required min="0">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        (click)="cerrarModalNuevoRegistro()">Cancelar</button>
+                    <button type="button" class="btn btn-primary" (click)="guardarNuevoRegistro()"
+                        [disabled]="nuevoIdProducto === null || nuevoIdLote === null || nuevoStock === null || nuevoStock < 0">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover mt-3">
+            <thead>
+                <tr>
+                    <th scope="col">ID Registro</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Lote</th>
+                    <th scope="col">Stock</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngIf="inventarioRegistros.length === 0">
+                    <td colspan="5" class="text-center">No hay registros de inventario para mostrar.</td>
+                </tr>
+                <tr *ngFor="let registro of inventarioRegistros">
+                    <th scope="row">{{ registro.id }}</th>
+                    <td>{{ registro.producto.nombre }}</td>
+                    <td>{{ registro.lote.codigo_lote }}</td>
+                    <td>{{ registro.stock }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-2"
+                            (click)="abrirModalEditarRegistro(registro)">Editar</button>
+                        <button class="btn btn-sm btn-danger" (click)="eliminarRegistro(registro.id)">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="mostrarModalEditar" class="modal fade show" style="display: block;" tabindex="-1" role="dialog"
+        aria-labelledby="editarRegistroModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarRegistroModalLabel">Editar Registro de Inventario</h5>
+                    <button type="button" class="btn-close" (click)="cerrarModalEditarRegistro()"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="editarIdProducto" class="form-label">Producto</label>
+                            <select class="form-control" id="editarIdProducto" [(ngModel)]="editarIdProducto"
+                                name="editarIdProducto" required>
+                                <option *ngFor="let producto of productosDisponibles" [ngValue]="producto.idProducto">{{
+                                    producto.nombre }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editarIdLote" class="form-label">Lote</label>
+                            <select class="form-control" id="editarIdLote" [(ngModel)]="editarIdLote"
+                                name="editarIdLote" required>
+                                <option *ngFor="let lote of lotesDisponibles" [ngValue]="lote.id_lote">{{ lote.codigo_lote }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editarStock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="editarStock" [(ngModel)]="editarStock"
+                                name="editarStock" required min="0">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        (click)="cerrarModalEditarRegistro()">Cancelar</button>
+                    <button type="button" class="btn btn-primary" (click)="guardarEdicionRegistro()"
+                        [disabled]="editarIdProducto === null || editarIdLote === null || editarStock === null || editarStock < 0">Guardar
+                        Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="mostrarModalNuevo || mostrarModalEditar" class="modal-backdrop fade show"></div>
+</div>
