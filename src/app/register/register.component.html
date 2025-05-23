@@ -1,0 +1,66 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Registro de Usuario
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="username"
+                                placeholder="Ingrese el nombre de usuario" [(ngModel)]="username" name="username"
+                                required minlength="3">
+                            <div *ngIf="registerForm.controls['username']?.invalid && registerForm.controls['username']?.touched"
+                                class="text-danger">
+                                El usuario es requerido y debe tener al menos 3 caracteres.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password"
+                                placeholder="Ingrese la contraseña" [(ngModel)]="password" name="password" required
+                                minlength="6">
+                            <div *ngIf="registerForm.controls['password']?.invalid && registerForm.controls['password']?.touched"
+                                class="text-danger">
+                                La contraseña es requerida y debe tener al menos 6 caracteres.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                            <input type="password" class="form-control" id="confirmPassword"
+                                placeholder="Confirme la contraseña" [(ngModel)]="confirmPassword"
+                                name="confirmPassword" required>
+                            <div *ngIf="password !== confirmPassword && registerForm.controls['confirmPassword']?.touched"
+                                class="text-danger">
+                                Las contraseñas no coinciden.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Rol</label>
+                            <select class="form-select" id="role" [(ngModel)]="rol" name="role" required>
+                                <option value="Analista">Analista</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                            <div *ngIf="registerForm.controls['role']?.invalid && registerForm.controls['role']?.touched"
+                                class="text-danger">
+                                El rol es requerido.
+                            </div>
+                        </div>
+
+                        <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+                        <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+
+                        <button type="submit" class="btn btn-primary"
+                            [disabled]="!registerForm.form.valid || password !== confirmPassword">
+                            Registrar
+                        </button>
+                        <button type="button" class="btn btn-link ms-2" (click)="goToLogin()">¿Ya tienes cuenta? Inicia
+                            Sesión</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

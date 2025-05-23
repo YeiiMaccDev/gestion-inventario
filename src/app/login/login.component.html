@@ -17,11 +17,14 @@
                             <input type="password" class="form-control" id="password"
                                 placeholder="Ingrese su contraseña" [(ngModel)]="password" name="password" required>
                         </div>
-                        <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-                        
-                        <button type="submit" class="btn btn-primary" [disabled]="!loginForm.form.valid">Iniciar Sesión</button>
-                    </form>
 
+                        <div *ngIf="loginSuccess" class="alert alert-success">¡Inicio de sesión exitoso! Redirigiendo...
+                        </div>
+                        <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+                        <button type="submit" class="btn btn-primary" [disabled]="!loginForm.form.valid">Iniciar
+                            Sesión</button>
+                    </form>
                 </div>
             </div>
         </div>

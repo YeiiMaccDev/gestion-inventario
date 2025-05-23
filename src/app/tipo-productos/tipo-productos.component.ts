@@ -1,15 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { NgFor, NgIf } from '@angular/common';
-
-interface TipoProducto {
-  id: number;
-  nombre: string;
-}
+import { FormsModule } from '@angular/forms';
+import { TipoProductoService, TipoProducto } from '../services/tipo-producto.service'; // Importa el servicio y la interfaz
 
 @Component({
   selector: 'app-tipo-productos',
+  standalone: true, // Si es un componente standalone
   imports: [NgFor, NgIf, FormsModule],
   templateUrl: './tipo-productos.component.html',
   styleUrl: './tipo-productos.component.css'
@@ -18,103 +14,129 @@ export class TipoProductosComponent implements OnInit {
   tiposProductos: TipoProducto[] = [];
   mostrarModalNuevo = false;
   mostrarModalEditar = false;
-  nuevoNombre: string = '';
-  editarTipoProductoId: number | null = null;
-  editarNombre: string = '';
-  apiUrl = 'http://localhost:5000/api/tipos_producto'; // Reemplaza con la URL de tu API
 
-  constructor(private http: HttpClient) { }
+  // Propiedades para "Agregar Nuevo Tipo de Producto"
+  nuevoNombre: string = '';
+
+  // Propiedades para "Editar Tipo de Producto"
+  tipoProductoEditando: TipoProducto | null = null;
+  editarNombre: string = '';
+
+  errorMessage: string = '';
+  successMessage: string = '';
+
+  constructor(private tipoProductoService: TipoProductoService) { }
 
   ngOnInit(): void {
-    this.cargarTiposProductos();
+    this.cargarTiposProducto(); // Cargar datos al inicializar el componente
   }
 
-  cargarTiposProductos(): void {
-    this.http.get<TipoProducto[]>(this.apiUrl).subscribe(
-      (data) => {
+  cargarTiposProducto(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.tipoProductoService.getTiposProducto().subscribe({
+      next: (data) => {
         this.tiposProductos = data;
       },
-      (error) => {
-        console.error('Error al cargar los tipos de producto:', error);
-        // Aquí podrías mostrar un mensaje de error al usuario
+      error: (err) => {
+        console.error('Error al cargar tipos de producto:', err);
+        this.errorMessage = 'No se pudieron cargar los tipos de producto. Intenta de nuevo más tarde.';
       }
-    );
+    });
   }
 
-  abrirModalNuevoTipoProducto() {
+  // --- Funciones para el modal "Agregar Nuevo Tipo de Producto" ---
+  abrirModalNuevoTipoProducto(): void {
     this.mostrarModalNuevo = true;
-    this.nuevoNombre = '';
+    this.nuevoNombre = ''; // Limpiar campo al abrir
+    this.errorMessage = '';
+    this.successMessage = '';
   }
 
-  cerrarModalNuevoTipoProducto() {
+  cerrarModalNuevoTipoProducto(): void {
     this.mostrarModalNuevo = false;
   }
 
-  guardarNuevoTipoProducto() {
-    if (this.nuevoNombre.trim()) {
-      this.http.post<TipoProducto>(this.apiUrl, { nombre: this.nuevoNombre.trim() }).subscribe(
-        (response) => {
-          this.tiposProductos = [...this.tiposProductos, response];
-          this.mostrarModalNuevo = false;
-          this.nuevoNombre = '';
-          console.log('Tipo de producto guardado:', response);
-        },
-        (error) => {
-          console.error('Error al guardar el tipo de producto:', error);
-          // Aquí podrías mostrar un mensaje de error al usuario
-        }
-      );
-    } else {
-      // Optionally add validation feedback
+  guardarNuevoTipoProducto(): void {
+    if (!this.nuevoNombre.trim()) {
+      this.errorMessage = 'El nombre del tipo de producto es requerido.';
+      return;
     }
+
+    this.tipoProductoService.createTipoProducto(this.nuevoNombre.trim()).subscribe({
+      next: (response) => {
+        this.successMessage = 'Tipo de producto creado exitosamente.';
+        this.cerrarModalNuevoTipoProducto();
+        this.cargarTiposProducto(); // Recargar la lista
+        this.nuevoNombre = ''; // Resetear campo
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (err) => {
+        console.error('Error al guardar nuevo tipo de producto:', err);
+        this.errorMessage = err.error?.message || 'Error al crear el tipo de producto. Intenta de nuevo.';
+      }
+    });
   }
 
-  abrirModalEditarTipoProducto(tipo: TipoProducto) {
-    this.mostrarModalEditar = true;
-    this.editarTipoProductoId = tipo.id;
+  // --- Funciones para el modal "Editar Tipo de Producto" ---
+  abrirModalEditarTipoProducto(tipo: TipoProducto): void {
+    this.tipoProductoEditando = { ...tipo }; // Clonar el objeto
     this.editarNombre = tipo.nombre;
+    this.mostrarModalEditar = true;
+    this.errorMessage = '';
+    this.successMessage = '';
   }
 
-  cerrarModalEditarTipoProducto() {
+  cerrarModalEditarTipoProducto(): void {
     this.mostrarModalEditar = false;
-    this.editarTipoProductoId = null;
+    this.tipoProductoEditando = null;
     this.editarNombre = '';
   }
 
-  guardarEditarTipoProducto() {
-    if (this.editarNombre.trim() && this.editarTipoProductoId !== null) {
-      this.http.put<TipoProducto>(`${this.apiUrl}/${this.editarTipoProductoId}`, { nombre: this.editarNombre.trim() }).subscribe(
-        (response) => {
-          this.tiposProductos = this.tiposProductos.map(tipo =>
-            tipo.id === this.editarTipoProductoId ? response : tipo
-          );
-          this.cerrarModalEditarTipoProducto();
-          console.log('Tipo de producto actualizado:', response);
-          // Opcional: Mostrar mensaje de éxito
-        },
-        (error) => {
-          console.error('Error al actualizar el tipo de producto:', error);
-          // Opcional: Mostrar mensaje de error
-        }
-      );
-    } else {
-      // Opcional: Mostrar feedback de validación
+  guardarEditarTipoProducto(): void {
+    if (!this.tipoProductoEditando) {
+      this.errorMessage = 'No hay tipo de producto seleccionado para editar.';
+      return;
     }
+    if (!this.editarNombre.trim()) {
+      this.errorMessage = 'El nombre del tipo de producto es requerido.';
+      return;
+    }
+
+    this.tipoProductoService.updateTipoProducto(this.tipoProductoEditando.id, this.editarNombre.trim()).subscribe({
+      next: (response) => {
+        this.successMessage = 'Tipo de producto actualizado exitosamente.';
+        this.cerrarModalEditarTipoProducto();
+        this.cargarTiposProducto(); // Recargar la lista
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (err) => {
+        console.error('Error al actualizar tipo de producto:', err);
+        this.errorMessage = err.error?.message || 'Error al actualizar el tipo de producto. Intenta de nuevo.';
+      }
+    });
   }
 
+  // --- Función para Eliminar Tipo de Producto ---
   eliminarTipoProducto(id: number): void {
-    if (confirm(`¿Estás seguro de que quieres eliminar el tipo de producto con ID ${id}?`)) {
-      this.http.delete(`${this.apiUrl}/${id}`).subscribe(
-        () => {
-          this.tiposProductos = this.tiposProductos.filter(tipo => tipo.id !== id);
-          console.log(`Tipo de producto con ID ${id} eliminado`);
-          // Opcional: Mostrar mensaje de éxito
+    if (confirm('¿Estás seguro de que deseas eliminar este tipo de producto?')) {
+      this.errorMessage = '';
+      this.successMessage = '';
+      this.tipoProductoService.deleteTipoProducto(id).subscribe({
+        next: (response) => {
+          this.successMessage = 'Tipo de producto eliminado exitosamente.';
+          this.cargarTiposProducto(); // Recargar la lista
+          setTimeout(() => this.successMessage = '', 3000);
         },
-        (error) => {
-          console.error(`Error al eliminar el tipo de producto con ID ${id}:`, error);
-          // Opcional: Mostrar mensaje de error
+        error: (err) => {
+          console.error('Error al eliminar tipo de producto:', err);
+          if (err.status === 409) { // Código de conflicto para FK_CONSTRAINT_VIOLATION
+            this.errorMessage = err.error?.message || 'No se puede eliminar este tipo de producto porque está siendo utilizado.';
+          } else {
+            this.errorMessage = err.error?.message || 'Error al eliminar el tipo de producto. Intenta de nuevo.';
+          }
         }
-      );
+      });
     }
   }
 }
